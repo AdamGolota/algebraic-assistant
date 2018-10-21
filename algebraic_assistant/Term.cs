@@ -100,7 +100,7 @@ namespace algebraic_assistant
         {
             var l1s = l1.Select<T, String>(item => item.ToString());
             var l2s = l2.Select<T, String>(item => item.ToString());
-            return !(l1s.Except(l2s).Any() && l2s.Except(l1s).Any());
+            return !(l1s.Except(l2s).Any() || l2s.Except(l1s).Any());
         }
 
         public void ZeroReduce()

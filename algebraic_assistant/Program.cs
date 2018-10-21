@@ -30,3 +30,4 @@ namespace algebraic_assistant
 // Equations:
 // x1 + 2 * x2 + 3 * x1 + 4 * x1 + x2 = y * ( x1 - x1)
 // (y1 + 2 - 2 + y1 - 2 * y1) + 2 = ((x + y) - (x + z)) * 2 + ((x + y) + (x + z)) * 0
+// (x + y + z )* 2 + 34 = x
