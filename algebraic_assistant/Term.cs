@@ -92,16 +92,15 @@ namespace algebraic_assistant
 
         public static bool AreSimilar(Term a, Term b)
         {   
-            return CompareLists<Polynom>(a.polynoms, b.polynoms) 
-                && CompareLists<Multiplier>(a.variables, b.variables);
+            return AreEqual<Polynom>(a.polynoms, b.polynoms) 
+                && AreEqual<Multiplier>(a.variables, b.variables);
         }
 
-        private static bool CompareLists<T>(List<T> l1, List<T> l2) where T : Multiplier
+        private static bool AreEqual<T>(List<T> l1, List<T> l2) where T : Multiplier
         {
-            return !l1
-                .Select<T, String>(item => item.ToString())
-                .Except(l2.Select<T, String>(item => item.ToString()))
-                .Any();
+            var l1s = l1.Select<T, String>(item => item.ToString());
+            var l2s = l2.Select<T, String>(item => item.ToString());
+            return !(l1s.Except(l2s).Any() && l2s.Except(l1s).Any());
         }
 
         public void ZeroReduce()
