@@ -20,6 +20,10 @@ namespace algebraic_assistant
         {
             get
             {
+                if (!terms.Any())
+                {
+                    return "0";
+                }
                 string result = brackets ? "( " : "";
                 result += terms.First();
                 foreach (Term t in terms.Skip(1))
@@ -34,11 +38,15 @@ namespace algebraic_assistant
 
         public bool IsMonomial
         {
-            get => terms.Count == 1;
+            get => terms.Count < 2;
         }
         
         public Term ToTerm()
         {
+            if (!terms.Any())
+            {
+                return new Term("0");
+            }
             return IsMonomial && !IsInverse ? terms.First() : null;
         }
 
@@ -66,10 +74,16 @@ namespace algebraic_assistant
             });
         }
 
+        public void RemoveZeroVals()
+        {
+            terms = terms.Where(t => t.Coeff != 0).ToList();
+        }
+    
         public void Simplify()
         {
             terms.ForEach(term => term.Simplify());
             ReduceSimilars();
+            RemoveZeroVals();
         }
 
         private void Parse(string polynom)

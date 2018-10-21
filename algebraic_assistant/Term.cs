@@ -40,7 +40,7 @@ namespace algebraic_assistant
                 term.polynoms = a.polynoms;
                 term.variables = a.variables;
 
-                term.constants.Add(a.Coeff+b.Coeff);
+                term.constants.Add(a.Coeff + b.Coeff);
                 return term;
             }
             else
@@ -53,12 +53,19 @@ namespace algebraic_assistant
         {
             get
             {
+                int optionalNegative = 1;
+                if (IsNegative)
+                {
+                    optionalNegative = -1;
+                }
                 if (!constants.Any())
                 {
-                    return new Constant("1", 1);
+                    return new Constant("1", optionalNegative);
                 }
-                return constants.Aggregate((prod, constant) => prod *= constant) * new Constant(IsNegative ? -1 : 1);
+                Constant result = constants.Aggregate((prod, constant) => prod *= constant) * optionalNegative;
+                return result;
             }
+            
         }
 
         public List<Multiplier> Multipliers
@@ -84,30 +91,26 @@ namespace algebraic_assistant
         }
 
         public static bool AreSimilar(Term a, Term b)
-        {
-           
-            a.Order();
-            b.Order();
-
-            a.polynoms.ForEach(p => )
-            bool polynomesEqual = a.polynoms.All(b.polynoms.Contains) && a.polynoms.Count == b.polynoms.Count;
-            bool variablesEqual = a.variables.All(b.variables.Contains) && a.variables.Count == b.variables.Count;
-            return polynomesEqual && variablesEqual;
+        {   
+            return CompareLists<Polynom>(a.polynoms, b.polynoms) 
+                && CompareLists<Multiplier>(a.variables, b.variables);
         }
 
-        private static bool CompareLists<T>(List<T> l1, List<T> l2)
+        private static bool CompareLists<T>(List<T> l1, List<T> l2) where T : Multiplier
         {
-            
-            if (l1.Count != l2.Count)
+            return !l1
+                .Select<T, String>(item => item.ToString())
+                .Except(l2.Select<T, String>(item => item.ToString()))
+                .Any();
+        }
+
+        public void ZeroReduce()
+        {
+            if (Coeff == 0)
             {
-                return false;
+                variables.Clear();
+                polynoms.Clear();
             }
-
-        }
-
-        private static void OrderList<T>(List<T> l)
-        {
-            l.OrderBy
         }
 
         public void Simplify()
@@ -130,15 +133,18 @@ namespace algebraic_assistant
 
         public void RemoveMonomials()
         {
+            var newTerms = new List<Term>();
             polynoms = polynoms.Where(polynom =>
             {
                 if (polynom.IsMonomial)
                 {
-                    MultiplyBy(polynom.ToTerm());
+                    newTerms.Add(polynom.ToTerm());
                     return false;
                 }
                 return true;
             }).ToList();
+
+            newTerms.ForEach(t => MultiplyBy(t));
         }
 
 

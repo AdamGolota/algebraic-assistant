@@ -27,10 +27,21 @@ namespace algebraic_assistant
             this.Name = this.value.ToString();
             return this;
         }
-
+        public static bool operator ==(Constant a, decimal b)
+        {
+            return a.value == b;
+        }
+        public static bool operator !=(Constant a, decimal b)
+        {
+            return a.value != b;
+        }
         public static Constant operator *(Constant a, Constant b)
         {
             return new Constant(a.Name + "*" + b.Name, a.value * b.value);
+        }
+        public static Constant operator *(Constant a, decimal b)
+        {
+            return new Constant(a.Name + "*" + b, a.value * b);
         }
 
         public static Constant operator +(Constant a, Constant b)
